@@ -1,0 +1,94 @@
+service: log-timeout
+
+variablesResolutionMode: 20210326
+
+package:
+  individually: true
+
+plugins:
+  - serverless-esbuild
+  - serverless-s3-cleaner
+  - serverless-iam-roles-per-function
+
+custom: 
+  project: template
+  baseName: ${self:custom.project}-${self:service}-${self:provider.stage}
+
+  esbuild:
+    target: node14
+    minify: true
+    sourcemap: true
+  
+  serverless-s3-cleaner:
+    buckets:
+      - ${cf:${self:custom.baseName}.ServerlessDeploymentBucketName, ''}
+  
+  serverless-iam-roles-per-function:
+    defaultInherit: true
+
+
+provider:
+  name: aws
+  region: ${opt:region, 'eu-west-1'}
+  stage: ${opt:stage, 'dev'}
+  stackName: ${self:custom.baseName}
+  deploymentBucket:
+    blockPublicAccess: true
+  environment:
+    # REUSE TCP CONNECTIONS - https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/node-reusing-connections.html
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    NODE_OPTIONS: "--enable-source-maps"
+    TIMEOUT_SECONDS: ${self:provider.timeout}
+  # ENABLE XRAY
+  tracing:
+    lambda: true
+    apiGateway: true
+  runtime: nodejs14.x
+  memorySize: 128
+  timeout: 30
+  versionFunctions: false
+  logRetentionInDays: 7
+  iam:
+    role:
+      name: ${self:custom.baseName}-provider
+      statements:
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${self:custom.baseName}-*:log-stream:*
+
+
+functions:
+  log:
+    name: ${self:custom.baseName}-log
+    description: Sends log in final milliseconds of function execution before timeout
+    handler: src/functions/logtimeout/index.handler
+    events:
+      - http:
+          path: /log
+          method: get
+
+  durationAlarm:
+    name: ${self:custom.baseName}-durationAlarm
+    description: Trigger an alarm if function invocation duration hits timeout
+    handler: src/functions/normal/index.handler
+    events:
+      - http:
+          path: /durationAlarm
+          method: get
+
+  metricFilter:
+    name: ${self:custom.baseName}-metricFilter
+    description: Trigger an alarm if function logs 'Task timed out after'
+    handler: src/functions/normal/index.handler
+    events:
+      - http:
+          path: /metricFilter
+          method: get
+
+resources:
+  - ${file(infra/approach2.yml)}
+  - ${file(infra/approach3.yml)}
+  - ${file(infra/sns.yml)}

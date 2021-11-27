@@ -1,0 +1,24 @@
+{
+  "name": "@lambda-investigation/log-time-out",
+  "version": "1.0.0",
+  "license": "UNLICENSED",
+  "scripts": {
+    "clean": "rimraf node_modules .serverless",
+    "deploy": "serverless deploy",
+    "remove": "serverless remove"
+  },
+  "dependencies": {
+    "@middy/core": "2.5.3",
+    "pino": "7.4.1"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "8.10.85",
+    "inquirer": "8.2.0",
+    "rimraf": "3.0.2",
+    "serverless": "2.66.2",
+    "serverless-s3-cleaner": "1.0.1",
+    "serverless-esbuild": "1.21.1",
+    "serverless-iam-roles-per-function": "3.2.0",
+    "uuid": "3.4.0"
+  }
+}

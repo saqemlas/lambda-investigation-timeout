@@ -1,0 +1,12 @@
+Resources:
+
+  # trigger message to slack on alarm trigger
+  # confirmation of subscription required before notifications
+  # NotificationTopic:
+  #   Type: AWS::SNS::Topic
+  #   Properties:
+  #     DisplayName: Notification topic for Timout Alarms
+  #     TopicName: ${self:custom.baseName}-topic
+  #     Subscription: 
+  #       - Endpoint: example@slack.com
+  #         Protocol: email

@@ -1,0 +1,31 @@
+Resources:
+
+  # send metric for each logged entry of 'task timed out'
+  TaskTimedOutMetric:
+    DependsOn: MetricFilterLambdaFunction
+    Type: AWS::Logs::MetricFilter
+    Properties: 
+      FilterPattern: Task timed out after
+      LogGroupName: /aws/lambda/${self:custom.baseName}-metricFilter
+      MetricTransformations: 
+        - MetricName: TaskTimedOut
+          MetricNamespace: Lambda
+          MetricValue: 1
+          DefaultValue: 0
+
+  # cloudwatch alarm triggered when lambda function logs 'task timed out'
+  TaskTimedOutAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: ${self:custom.baseName}-metricFilter
+      Namespace: Lambda
+      MetricName: TaskTimedOut
+      Statistic: Sum
+      Unit: Count
+      Period: 60 # seconds
+      EvaluationPeriods: 3 # evaluate over 3x60s
+      ComparisonOperator: GreaterThanThreshold
+      Threshold: 1
+      TreatMissingData: notBreaching
+      # AlarmActions: 
+        # - !Ref NotificationTopic

@@ -1,0 +1,21 @@
+Resources:
+
+  # cloudwatch alarm triggered when lambda function exceeds (time out/max) duration
+  DurationAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: ${self:custom.baseName}-durationAlarm
+      Dimensions: 
+        - Name: FunctionName
+          Value: !Ref DurationAlarmLambdaFunction
+      Namespace: AWS/Lambda
+      MetricName: Duration
+      Statistic: Maximum
+      Unit: Milliseconds
+      Period: 60 # seconds
+      EvaluationPeriods: 5 # evaluate over 5x60s
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      Threshold: 30000 # 30s
+      TreatMissingData: notBreaching
+      # AlarmActions: 
+        # - !Ref NotificationTopic
