@@ -18,14 +18,14 @@ When Lambda runs a function, it passes a context object to the handler. This obj
 
 A large indicator of timeouts is by looking at a function’s Max Duration metric.
 
-> Cost: Pay for both cloudwatch metrics and alarms. See information on pricing - https://aws.amazon.com/cloudwatch/pricing/
+> Cost: Pay for cloudwatch alarm (metric already exists). See information on pricing - https://aws.amazon.com/cloudwatch/pricing/
 
 
 ### Approached 3 - Filtering Logs (Cloudwatch Log Metrics & Alarm)
 
 Guaranteed receiving a 'Task timed out after...' log for when a function times out, therefore creating a cloudwatch log metric for the filter pattern and cloudwatch alarm to be trigger on a certain count.
 
-> Cost: Pay for both cloudwatch metrics and alarms. See information on pricing - https://aws.amazon.com/cloudwatch/pricing/
+> Cost: Pay for both cloudwatch alarm and custom metric. See information on pricing - https://aws.amazon.com/cloudwatch/pricing/
 
 
 ### For more information
