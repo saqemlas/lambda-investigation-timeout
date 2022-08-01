@@ -12,13 +12,12 @@
     "pino": "7.4.1"
   },
   "devDependencies": {
-    "@types/aws-lambda": "8.10.85",
-    "inquirer": "8.2.0",
+    "@types/aws-lambda": "8.10.101",
+    "esbuild": "0.14.51",
     "rimraf": "3.0.2",
-    "serverless": "2.66.2",
-    "serverless-s3-cleaner": "1.0.1",
-    "serverless-esbuild": "1.21.1",
-    "serverless-iam-roles-per-function": "3.2.0",
-    "uuid": "3.4.0"
+    "serverless": "3.21.0",
+    "serverless-s3-cleaner": "2.0.1",
+    "serverless-esbuild": "1.32.5",
+    "serverless-iam-roles-per-function": "3.2.0"
   }
 }
